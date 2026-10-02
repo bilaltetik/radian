@@ -1,0 +1,96 @@
+(* ============================================================
+   Radian Lang - Lexer grammar
+   Token ailesi: Number | Literal | Word | Symbol
+   Kural: lexer maximal munch yapar (en uzun eşleşme kazanır).
+   ============================================================ *)
+
+(* ---------- Karakter sınıfları ---------- *)
+
+digit_nz    = "1".."9" ;
+digit       = "0" | digit_nz ;
+bin_digit   = "0" | "1" ;
+oct_digit   = "0".."7" ;
+hex_digit   = digit | "a".."f" | "A".."F" ;
+
+letter      = "a".."z" | "A".."Z" ;
+newline     = "\n" ;
+any_char    = ? herhangi bir Unicode karakteri ? ;
+
+
+(* ---------- Boşluk ve yorum (token üretmez) ---------- *)
+
+whitespace    = " " | "\t" | "\r" | "\n" ;
+line_comment  = "//", { any_char - newline } ;
+block_comment = "/*", { any_char - "*/" }, "*/" ;
+trivia        = whitespace | line_comment | block_comment ;
+
+
+(* ---------- 1) Number ---------- *)
+(* İşaret lexer'da YOK: "-" ve "+" Symbol'dür, negatiflik parser'da unary. *)
+
+dec_int =  digit, { digit } ;
+bin_int = "0b", bin_digit, { bin_digit } ;
+oct_int = "0o", oct_digit, { oct_digit } ;
+hex_int = "0x", hex_digit, { hex_digit } ;
+
+int_suffix   = "i8" | "i16" | "i32" | "i64"
+             | "u8" | "u16" | "u32" | "u64" ;
+float_suffix = "f32" | "f64" ;
+
+integer = ( dec_int | bin_int | oct_int | hex_int ), [ int_suffix ] ;
+decimal = dec_int, ".", digit, { digit }, [ float_suffix ] ;
+
+number  = decimal | integer ;       (* decimal önce denenir: "1.5" -> decimal *)
+
+
+(* ---------- 2) Literal ---------- *)
+
+escape = "\\", ( "n" | "t" | "r" | "0" | "\\" | "'" | '"'
+               | "x", hex_digit, hex_digit
+               | "u{", hex_digit, { hex_digit }, "}" ) ;
+
+string_char = ( any_char - ( '"' | "\\" | newline ) ) | escape ;
+char_char   = ( any_char - ( "'" | "\\" | newline ) ) | escape ;
+
+string_literal = '"', { string_char }, '"' ;
+char_literal   = "'", char_char, "'" ;
+
+literal = string_literal | char_literal ;
+
+
+(* ---------- 3) Word ---------- *)
+(* Lexer önce identifier şeklinde okur, sonra keyword tablosuna bakar. *)
+
+ident_start = letter | "_" ;
+ident_cont  = ident_start | digit ;
+word        = ident_start, { ident_cont } ;
+
+keyword = "let" | "mut" | "const"
+        | "fn" | "return"
+        | "if" | "else" | "while" | "for" | "in" | "loop"
+        | "break" | "continue"
+        | "struct" | "enum" | "impl"
+        | "true" | "false" ;
+
+identifier = word - keyword ;
+
+
+(* ---------- 4) Symbol ---------- *)
+
+operator = "+" | "-" | "*" | "/" | "%"
+         | "==" | "!=" | "<" | "<=" | ">" | ">="
+         | "&&" | "||" | "!"
+         | "&" | "|" | "^" | "~" | "<<" | ">>"
+         | "=" | "+=" | "-=" | "*=" | "/=" | "%=" ;
+
+punctuation = "(" | ")" | "{" | "}" | "[" | "]"
+            | "," | ";" | ":" | "::" | "."
+            | ".." | "..=" | "->" | "=>" | "?" | "@" | "#" ;
+
+symbol = operator | punctuation ;
+
+
+(* ---------- Üst seviye ---------- *)
+
+token = number | literal | word | symbol ;
+source = { trivia | token } ;

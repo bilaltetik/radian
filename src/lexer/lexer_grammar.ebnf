@@ -1,0 +1,96 @@
+(* ==================================================================
+   Radian Lang - Lexer grammar (sözcük çözümleme)
+
+   Görev: kaynak metni token'lara ayırmak.
+
+   Token ailesi (types.rs -> TokenKind):
+       Number | Literal | Word | Symbol
+
+   Genel kurallar:
+     1. Maximal munch: bir konumda eşleşebilen EN UZUN token alınır.
+     2. Hangi kurala gireceği ilk karaktere bakılarak seçilir
+        (aşağıdaki "Dağıtım" bölümü).
+     3. Boşluk ve yorum token üretmez.
+     4. "Lexer kuralı" notları, EBNF ile ifade edilemeyen kısıtlardır.
+   ================================================================== *)
+
+
+(* ---------- Karakter sınıfları ---------- *)
+
+digit_nz  = "1".."9" ;
+digit     = "0".."9" ;
+bin_digit = "0" | "1" ;
+oct_digit = "0".."7" ;
+hex_digit = digit | "a".."f" | "A".."F" ;
+
+letter    = "a".."z" | "A".."Z" ;
+newline   = "\n" ;
+any_char  = ? herhangi bir Unicode karakteri ? ;
+
+
+
+whitespace    = " " | "\t" | "\r" | "\n" ;
+line_comment  = "//", { any_char - newline } ;
+block_comment = "/*", { any_char - "*/" }, "*/" ;
+trivia        = whitespace | line_comment | block_comment ;
+
+
+dec_int = digit, { digit } ;
+bin_int = ( "0b" | "0B" ), bin_digit, { bin_digit } ;
+oct_int = ( "0o" | "0O" ), oct_digit, { oct_digit } ;
+hex_int = ( "0x" | "0X" ), hex_digit, { hex_digit } ;
+
+exponent = ( "e" | "E" ), [ "+" | "-" ], digit, { digit } ;
+
+int_suffix   = "i8" | "i16" | "i32" | "i64"
+             | "u8" | "u16" | "u32" | "u64" ;
+float_suffix = "f32" | "f64" ;
+
+integer = ( dec_int | bin_int | oct_int | hex_int ), [ int_suffix ] ;
+
+
+decimal = ( dec_int, ".", digit, { digit }, [ exponent ]
+          | dec_int, exponent ),
+          [ float_suffix ] ;
+
+number = decimal | integer ;
+
+
+escape = "\\", ( "n" | "t" | "r" | "0" | "\\" | "'" | '"'
+               | "x", hex_digit, hex_digit
+               | "u{", hex_digit, { hex_digit }, "}" ) ;
+
+string_char = ( any_char - ( '"'  | "\\" | newline ) ) | escape ;
+char_char   = ( any_char - ( "'"  | "\\" | newline ) ) | escape ;
+
+string_literal = '"', { string_char }, '"' ;
+char_literal   = "'", char_char, "'" ;
+
+literal = string_literal | char_literal ;
+
+ident_start = letter | "_" ;
+ident_cont  = ident_start | digit ;
+word        = ident_start, { ident_cont } ;
+
+keyword    = ? Keyword tablosundaki bir kelime ? ;
+
+identifier = word - keyword ;
+
+
+operator = "+" | "-" | "*" | "/" | "%"
+         | "==" | "!=" | "<" | "<=" | ">" | ">="
+         | "&&" | "||" | "!"
+         | "&" | "|" | "^" | "~" | "<<" | ">>"
+         | "=" | "+=" | "-=" | "*=" | "/=" | "%=" ;
+
+punctuation = "(" | ")" | "{" | "}" | "[" | "]"
+            | "," | ";" | ":" | "::" | "."
+            | ".." | "..=" | "->" | "=>" | "?" | "@" | "#" ;
+
+symbol = operator | punctuation ;
+
+
+number_start  = digit ;
+literal_start = '"' | "'" ;
+word_start    = ident_start ;
+symbol_start  = ? bir symbol`ün ilk karakteri ? ;
