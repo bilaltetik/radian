@@ -1,22 +1,3 @@
-(* ==================================================================
-   Radian Lang - Lexer grammar (sözcük çözümleme)
-
-   Görev: kaynak metni token'lara ayırmak.
-
-   Token ailesi (types.rs -> TokenKind):
-       Number | Literal | Word | Symbol
-
-   Genel kurallar:
-     1. Maximal munch: bir konumda eşleşebilen EN UZUN token alınır.
-     2. Hangi kurala gireceği ilk karaktere bakılarak seçilir
-        (aşağıdaki "Dağıtım" bölümü).
-     3. Boşluk ve yorum token üretmez.
-     4. "Lexer kuralı" notları, EBNF ile ifade edilemeyen kısıtlardır.
-   ================================================================== *)
-
-
-(* ---------- Karakter sınıfları ---------- *)
-
 digit_nz  = "1".."9" ;
 digit     = "0".."9" ;
 bin_digit = "0" | "1" ;
