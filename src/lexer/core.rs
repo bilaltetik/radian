@@ -1,6 +1,3 @@
-use std::result;
-use std::{collections::hash_map, iter::Map};
-
 use crate::lexer::types::*;
 use crate::lexer::utils::*;
 
@@ -67,28 +64,28 @@ pub fn tokenize(input: &str) -> Result<Vec<Token>, String> {
             //tokens
             Some(c) if match_number(c) => { 
                 let result = lex_number(&input[pos..]).unwrap();
-                tokens.push(Token { kind: TokenKind::Number(result.0), lexeme: input[pos..(result.1)].to_string(), span });
+                tokens.push(Token { kind: TokenKind::Number(result.0), lexeme: input[pos..pos + result.1].to_string(), span });
                 span.col += result.1;
                 pos += result.1;
                 continue;
              }
             Some(c) if match_word(c)   => {
                 let result = lex_word(&input[pos..]).unwrap();
-                tokens.push(Token { kind: TokenKind::Word(result.0), lexeme: input[pos..(result.1)].to_string(), span });
+                tokens.push(Token { kind: TokenKind::Word(result.0), lexeme: input[pos..pos + result.1].to_string(), span });
                 span.col += result.1;
                 pos += result.1;
                 continue;
             }
             Some(c) if match_symbol(c).is_some()   => {
                 let result = lex_symbol(&input[pos..]).unwrap();
-                tokens.push(Token { kind: TokenKind::Symbol(result.0), lexeme: input[pos..(result.1)].to_string(), span });
+                tokens.push(Token { kind: TokenKind::Symbol(result.0), lexeme: input[pos..pos + result.1].to_string(), span });
                 span.col += result.1;
                 pos += result.1;
                 continue;
             }
             Some(c) if match_string(c).is_some() => { 
                 let result = lex_string(&input[pos..]).unwrap();
-                tokens.push(Token { kind: TokenKind::Literal(result.0), lexeme: input[pos..(result.1)].to_string(), span });
+                tokens.push(Token { kind: TokenKind::Literal(result.0), lexeme: input[pos..pos + result.1].to_string(), span });
                 span.col += result.1;
                 pos += result.1;
                 continue;
@@ -104,5 +101,5 @@ pub fn tokenize(input: &str) -> Result<Vec<Token>, String> {
         }
     }
 
-	Ok((tokens))
+	Ok(tokens)
 }

@@ -1,0 +1,23 @@
+(* --- 1. Token Grupları (Lexer'dan gelenler) --- *)
+Integer = raw_integer | Binary | Octal | Hexadecimal
+Decimal = raw_decimal | scientific
+Number  = Integer | Decimal
+Literal = String | Char
+Word    = Identifier | Keyword
+
+
+Value    = Number | Literal | Word
+Operator = '+' | '-' | '*' | '/' | '==' | '<' | '>'
+
+
+Expression  Operation
+
+Operation = Value 
+          | Operation Operator Operation 
+          | '(' Expression ')'
+
+
+Statement = Expression ";"
+
+
+Program = { Statement } Eof

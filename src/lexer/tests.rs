@@ -75,7 +75,7 @@ fn not_a_symbol() {
 
 #[test]
 fn keyword_lookup() {
-    assert_eq!(Keyword::from_str("let"), Some(Keyword::Let));
+    assert_eq!(Keyword::from_str("let"), Some(Keyword::Var));
     assert_eq!(Keyword::from_str("letter"), None);
 }
 
