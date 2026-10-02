@@ -1,17 +1,3 @@
-// Radian Lang - lexer çekirdeği
-//
-// Buraya gelecekler:
-//   - struct Lexer { ... }        (kaynak, konum, line/col)
-//   - peek() / advance()          (line/col sadece advance içinde güncellenir)
-//   - next_token() -> Result<Token, LexError>
-//         ilk karaktere bakıp dağıtır:
-//           rakam        -> utils::number::lex_number
-//           harf, '_'    -> lex_word
-//           '"' , '\''   -> utils::string::lex_string
-//           diğer        -> utils::symbol::lex_symbol
-//         boşluk ve yorum atlanır, token üretmez
-//   - tokenize(input) -> Result<Vec<Token>, LexError>
-
 use std::result;
 use std::{collections::hash_map, iter::Map};
 
@@ -30,7 +16,7 @@ pub fn tokenize(input: &str) -> Result<Vec<Token>, String> {
     
     //token üretme döngüsü
     while !input.is_empty() {
-        let c = peek(input, pos);   // her iterasyonda tek peek
+        let c = peek(input, pos);
 
         match c {
             //eof
@@ -51,6 +37,32 @@ pub fn tokenize(input: &str) -> Result<Vec<Token>, String> {
             }
 
             //Comments
+            Some('/') if input[pos..].starts_with("//") => {
+                let len = input[pos..].find('\n').unwrap_or(input.len() - pos);
+                span.col += input[pos..pos + len].chars().count();
+                pos += len;
+                continue;
+            }
+
+            Some('/') if input[pos..].starts_with("/*") => {
+                let end = match input[pos + 2..].find("*/") {
+                    Some(i) => pos + 2 + i + 2,
+                    None => {
+                        return Err(format!(
+                            "Unterminated block comment at ({},{})",
+                            span.line, span.col
+                        ));
+                    }
+                };
+
+                for ch in input[pos..end].chars() {
+                    if ch == '\n' { span.line += 1; span.col = 0; } else { span.col += 1; }
+                }
+                pos = end;
+                continue;
+            }
+
+
 
             //tokens
             Some(c) if match_number(c) => { 

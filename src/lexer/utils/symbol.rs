@@ -1,9 +1,6 @@
-// Radian Lang - symbol lexer'ı
-
 use super::super::types::*;
 
-/// Sıra önemsiz. Şart: her symbol'ün tüm önekleri de tabloda olmalı
-/// ("..=" için ".." ve "."). Bunu `prefix_closed` testi doğrular.
+
 pub const SYMBOLS: &[(&str, Symbol)] = &[
     // 3 karakter
     ("..=", Symbol::DotDotEq),
@@ -31,7 +28,6 @@ pub const SYMBOLS: &[(&str, Symbol)] = &[
     ("?", Symbol::Question), ("@", Symbol::At), ("#", Symbol::Hash),
 ];
 
-/// Verilen metnin TAMAMI tabloda bir symbol mü.
 pub fn symbol_from_str(s: &str) -> Option<Symbol> {
     SYMBOLS
         .iter()
@@ -39,15 +35,12 @@ pub fn symbol_from_str(s: &str) -> Option<Symbol> {
         .map(|(_, sym)| *sym)
 }
 
-/// Tek karakterlik peek: bu karakter bir symbol'ün başlangıcı mı?
 pub fn match_symbol(c: char) -> Option<Symbol> {
     let mut buf = [0u8; 4];
     symbol_from_str(c.encode_utf8(&mut buf))
 }
 
-/// Girdinin başından en uzun symbol'ü okur: (symbol, byte uzunluğu).
-/// Her adımda bir karakter daha ekler; sonuç hâlâ tanımlı bir symbol
-/// olduğu sürece uzar, tanımsızlaşınca durur.
+
 pub fn lex_symbol(input: &str) -> Option<(Symbol, usize)> {
     let first = input.chars().next()?;
     let mut best = (match_symbol(first)?, first.len_utf8());

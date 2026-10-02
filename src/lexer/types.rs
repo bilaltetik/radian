@@ -1,5 +1,3 @@
-// Radian Lang - lexer tipleri (lexer.ebnf ile birebir)
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum IntegerAffix {
     None,
@@ -119,7 +117,7 @@ pub struct Span {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Token {
     pub kind: TokenKind,
-    /// Kaynaktaki ham metin. Değer dönüşümü (parse) lexer'da değil, sonra yapılır.
+
     pub lexeme: String,
     pub span: Span,
 }

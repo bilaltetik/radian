@@ -1,8 +1,5 @@
-// Radian Lang - string / char literal lexer'ı
-
 use super::super::types::*;
 
-/// Ana döngüdeki peek: bu karakter bir literal'in başlangıcı mı?
 pub fn match_string(c: char) -> Option<LiteralKind> {
     match c {
         '"' => Some(LiteralKind::String),
@@ -11,8 +8,6 @@ pub fn match_string(c: char) -> Option<LiteralKind> {
     }
 }
 
-/// Girdinin başındaki literal'i okur: (kind, kapanış dahil byte uzunluğu).
-/// Kapanış, açılışla AYNI tırnaktır. Escape'ler lexer.ebnf'teki gibi doğrulanır.
 pub fn lex_string(input: &str) -> Result<(LiteralKind, usize), String> {
     let mut chars = input.char_indices();
 
@@ -25,7 +20,7 @@ pub fn lex_string(input: &str) -> Result<(LiteralKind, usize), String> {
         None => return Err(String::from("Not a string literal")),
     };
 
-    let mut count = 0; // içerikteki öğe sayısı (escape tek öğe sayılır)
+    let mut count = 0;
 
     while let Some((i, c)) = chars.next() {
         if c == open {

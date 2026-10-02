@@ -5,13 +5,10 @@ use super::super::types::*;
 const INT_SUFFIXES: &[&str] = &["i8", "i16", "i32", "i64", "u8", "u16", "u32", "u64"];
 const FLOAT_SUFFIXES: &[&str] = &["f32", "f64"];
 
-/// Ana döngüdeki ucuz peek: bu karakter bir sayının başlangıcı mı?
-/// (Kind'i burada bilemeyiz: "1" mi "1.5" mi, ancak okuyunca belli olur.)
 pub fn match_number(c: char) -> bool {
     c.is_ascii_digit()
 }
 
-/// Verilen tabanda bu byte bir rakam mı.
 fn is_digit_of(affix: IntegerAffix, c: u8) -> bool {
     match affix {
         IntegerAffix::None => c.is_ascii_digit(),
@@ -21,7 +18,6 @@ fn is_digit_of(affix: IntegerAffix, c: u8) -> bool {
     }
 }
 
-/// i'den itibaren rakam olan byte'ları geçer, duracağı konumu döndürür.
 fn skip_digits(b: &[u8], mut i: usize, affix: IntegerAffix) -> usize {
     while i < b.len() && is_digit_of(affix, b[i]) {
         i += 1;
@@ -29,7 +25,6 @@ fn skip_digits(b: &[u8], mut i: usize, affix: IntegerAffix) -> usize {
     i
 }
 
-/// i konumunda listedeki suffix'lerden biri varsa sonrasına, yoksa i'ye döner.
 fn take_suffix(input: &str, i: usize, suffixes: &[&str]) -> usize {
     let rest = &input[i..];
     suffixes
@@ -38,7 +33,6 @@ fn take_suffix(input: &str, i: usize, suffixes: &[&str]) -> usize {
         .map_or(i, |s| i + s.len())
 }
 
-/// Sayıdan hemen sonra harf/rakam/_ geliyorsa hata: "0b102", "12abc", "1e".
 fn check_end(input: &str, end: usize) -> Result<(), String> {
     match input[end..].chars().next() {
         Some(c) if c.is_alphanumeric() || c == '_' => {
@@ -48,8 +42,6 @@ fn check_end(input: &str, end: usize) -> Result<(), String> {
     }
 }
 
-/// Girdinin başındaki sayıyı okur: (kind, byte uzunluğu).
-/// Sayı boyunca sadece ASCII byte'lar ilerlendiği için dilimleme güvenli.
 pub fn lex_number(input: &str) -> Result<(NumberKind, usize), String> {
     let b = input.as_bytes();
     if !b.first().map_or(false, |c| c.is_ascii_digit()) {
@@ -76,7 +68,6 @@ pub fn lex_number(input: &str) -> Result<(NumberKind, usize), String> {
         }
     }
 
-    // 2) Ondalık taban: tam kısım (baştaki sıfırlar serbest: 0543)
     let mut i = skip_digits(b, 0, IntegerAffix::None);
     let mut is_decimal = false;
     let mut scientific = false;
@@ -99,7 +90,6 @@ pub fn lex_number(input: &str) -> Result<(NumberKind, usize), String> {
             is_decimal = true;
             scientific = true;
         }
-        // rakam yoksa 'e' tüketilmez, check_end hata verir
     }
 
     let (kind, suffixes) = if is_decimal {
