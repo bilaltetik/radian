@@ -19,7 +19,7 @@ pub fn lex_word(input: &str) -> Option<(WordKind, usize)> {
         .find(|&(_, c)| !is_word_cont(c))
         .map_or(input.len(), |(i, _)| i);
 
-    let kind = match Keyword::from_str(&input[..len]) {
+    let kind = match KeywordDomain::from_str(&input[..len]) {
         Some(k) => WordKind::Keyword(k),
         None => WordKind::Identifier,
     };

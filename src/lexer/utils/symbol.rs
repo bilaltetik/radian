@@ -1,47 +1,47 @@
 use super::super::types::*;
 
 
-pub const SYMBOLS: &[(&str, Symbol)] = &[
+pub const TOKEN_SYMBOL: &[(&str, SymbolDomain)] = &[
     // 3 karakter
-    ("..=", Symbol::DotDotEq),
+    ("..=", SymbolDomain::DotDotEq),
     // 2 karakter
-    ("==", Symbol::EqEq), ("!=", Symbol::NotEq),
-    ("<=", Symbol::LtEq), (">=", Symbol::GtEq),
-    ("&&", Symbol::AndAnd), ("||", Symbol::OrOr),
-    ("<<", Symbol::Shl), (">>", Symbol::Shr),
-    ("+=", Symbol::PlusEq), ("-=", Symbol::MinusEq),
-    ("*=", Symbol::StarEq), ("/=", Symbol::SlashEq),
-    ("%=", Symbol::PercentEq),
-    ("::", Symbol::ColonColon), ("..", Symbol::DotDot),
-    ("->", Symbol::Arrow), ("=>", Symbol::FatArrow),
+    ("==", SymbolDomain::EqEq), ("!=", SymbolDomain::NotEq),
+    ("<=", SymbolDomain::LtEq), (">=", SymbolDomain::GtEq),
+    ("&&", SymbolDomain::AndAnd), ("||", SymbolDomain::OrOr),
+    ("<<", SymbolDomain::Shl), (">>", SymbolDomain::Shr),
+    ("+=", SymbolDomain::PlusEq), ("-=", SymbolDomain::MinusEq),
+    ("*=", SymbolDomain::StarEq), ("/=", SymbolDomain::SlashEq),
+    ("%=", SymbolDomain::PercentEq),
+    ("::", SymbolDomain::ColonColon), ("..", SymbolDomain::DotDot),
+    ("->", SymbolDomain::Arrow), ("=>", SymbolDomain::FatArrow),
     // 1 karakter
-    ("+", Symbol::Plus), ("-", Symbol::Minus), ("*", Symbol::Star),
-    ("/", Symbol::Slash), ("%", Symbol::Percent),
-    ("<", Symbol::Lt), (">", Symbol::Gt), ("!", Symbol::Bang),
-    ("&", Symbol::Amp), ("|", Symbol::Pipe), ("^", Symbol::Caret),
-    ("~", Symbol::Tilde), ("=", Symbol::Eq),
-    ("(", Symbol::LParen), (")", Symbol::RParen),
-    ("{", Symbol::LBrace), ("}", Symbol::RBrace),
-    ("[", Symbol::LBracket), ("]", Symbol::RBracket),
-    (",", Symbol::Comma), (";", Symbol::Semicolon),
-    (":", Symbol::Colon), (".", Symbol::Dot),
-    ("?", Symbol::Question), ("@", Symbol::At), ("#", Symbol::Hash),
+    ("+", SymbolDomain::Plus), ("-", SymbolDomain::Minus), ("*", SymbolDomain::Star),
+    ("/", SymbolDomain::Slash), ("%", SymbolDomain::Percent),
+    ("<", SymbolDomain::Lt), (">", SymbolDomain::Gt), ("!", SymbolDomain::Bang),
+    ("&", SymbolDomain::Amp), ("|", SymbolDomain::Pipe), ("^", SymbolDomain::Caret),
+    ("~", SymbolDomain::Tilde), ("=", SymbolDomain::Eq),
+    ("(", SymbolDomain::LParen), (")", SymbolDomain::RParen),
+    ("{", SymbolDomain::LBrace), ("}", SymbolDomain::RBrace),
+    ("[", SymbolDomain::LBracket), ("]", SymbolDomain::RBracket),
+    (",", SymbolDomain::Comma), (";", SymbolDomain::Semicolon),
+    (":", SymbolDomain::Colon), (".", SymbolDomain::Dot),
+    ("?", SymbolDomain::Question), ("@", SymbolDomain::At), ("#", SymbolDomain::Hash),
 ];
 
-pub fn symbol_from_str(s: &str) -> Option<Symbol> {
-    SYMBOLS
+pub fn symbol_from_str(s: &str) -> Option<SymbolDomain> {
+    TOKEN_SYMBOL
         .iter()
         .find(|(text, _)| *text == s)
         .map(|(_, sym)| *sym)
 }
 
-pub fn match_symbol(c: char) -> Option<Symbol> {
+pub fn match_symbol(c: char) -> Option<SymbolDomain> {
     let mut buf = [0u8; 4];
     symbol_from_str(c.encode_utf8(&mut buf))
 }
 
 
-pub fn lex_symbol(input: &str) -> Option<(Symbol, usize)> {
+pub fn lex_symbol(input: &str) -> Option<(SymbolDomain, usize)> {
     let first = input.chars().next()?;
     let mut best = (match_symbol(first)?, first.len_utf8());
 

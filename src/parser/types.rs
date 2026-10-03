@@ -1,56 +1,42 @@
-use crate::lexer::types::Token;
+use crate::lexer::types::{KeywordDomain, SymbolDomain, WordKind::Keyword};
 
-#[derive(Debug, Clone)]
-pub enum Expression {
-    None,
-    SymbolEntryKey(String),
-    Token(Token),
+
+
+
+enum Operation{
+    Sym(SymbolDomain),
+    Key(KeywordDomain),
 }
 
-#[derive(Debug, Clone)]
-pub enum SymbolEntry {
-    Variable { kind: VariableTypes },
-    Function {
-        domain: Box<VariableTypes>,
-        range: Box<VariableTypes>,
-    },
-}
-
-#[derive(Debug, Clone)]
-pub enum Command {
-    Null,
-    Program,
-    Statement,
-    ValueAs,
-    TypeAs,
-    CreateVar,
-    DirectExpression,
-}
-
-#[derive(Debug, Clone)]
-pub struct AstNode {
-    pub cmd: Command,
-    pub args: Vec<AstNode>,
-    pub value: Expression,
-}
-
-impl AstNode {
-    pub fn program() -> AstNode {
-        AstNode {
-            cmd: Command::Program,
-            args: Vec::new(),
-            value: Expression::None,
-        }
+impl From<KeywordDomain> for Operation {
+    fn from(o: KeywordDomain) -> Self {
+        Operation::Key(o)
     }
 }
 
-#[derive(Debug, Clone)]
-pub enum VariableTypes {
-    None,
-    Null,
-    I8,
-    I16,
-    I32,
-    I64,
-    Tuple(Vec<VariableTypes>),
+impl From<SymbolDomain> for Operation {
+    fn from(o: SymbolDomain) -> Self {
+        Operation::Sym(o)
+    }
+}
+
+impl Operation{
+    fn arg_count (self) -> (u8,u8){
+        match self {
+            //Binary
+            Sym(SymbolDomain::Plus) 
+            
+            => {
+                (1,1)
+            }
+            //Postfix
+
+            //Prefix
+
+            //bool & block
+
+            //other
+            _ => (0,0)
+        }
+    }
 }

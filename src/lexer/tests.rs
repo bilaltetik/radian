@@ -9,7 +9,7 @@ use super::utils::symbol::*;
 // yoksa lex_symbol uzun symbol'e ulaşamaz.
 #[test]
 fn prefix_closed() {
-    for (text, _) in SYMBOLS {
+    for (text, _) in TOKEN_SYMBOL {
         for end in 1..=text.len() {
             assert!(
                 symbol_from_str(&text[..end]).is_some(),
@@ -23,8 +23,8 @@ fn prefix_closed() {
 
 #[test]
 fn no_duplicate_texts() {
-    for (i, (a, _)) in SYMBOLS.iter().enumerate() {
-        for (b, _) in &SYMBOLS[i + 1..] {
+    for (i, (a, _)) in TOKEN_SYMBOL.iter().enumerate() {
+        for (b, _) in &TOKEN_SYMBOL[i + 1..] {
             assert_ne!(a, b, "'{}' tabloda iki kez var", a);
         }
     }
@@ -33,15 +33,15 @@ fn no_duplicate_texts() {
 // Her symbol kendi metninden aynen geri okunabilmeli.
 #[test]
 fn every_symbol_roundtrips() {
-    for (text, sym) in SYMBOLS {
+    for (text, sym) in TOKEN_SYMBOL {
         assert_eq!(lex_symbol(text), Some((*sym, text.len())), "'{}'", text);
     }
 }
 
 #[test]
 fn single_char_peek() {
-    assert_eq!(match_symbol('+'), Some(Symbol::Plus));
-    assert_eq!(match_symbol('.'), Some(Symbol::Dot));
+    assert_eq!(match_symbol('+'), Some(SymbolDomain::Plus));
+    assert_eq!(match_symbol('.'), Some(SymbolDomain::Dot));
     assert_eq!(match_symbol('a'), None);
     assert_eq!(match_symbol('5'), None);
     assert_eq!(match_symbol('ş'), None);
@@ -49,20 +49,20 @@ fn single_char_peek() {
 
 #[test]
 fn maximal_munch() {
-    assert_eq!(lex_symbol("..=5"), Some((Symbol::DotDotEq, 3)));
-    assert_eq!(lex_symbol("..5"), Some((Symbol::DotDot, 2)));
-    assert_eq!(lex_symbol(".5"), Some((Symbol::Dot, 1)));
-    assert_eq!(lex_symbol("<<1"), Some((Symbol::Shl, 2)));
-    assert_eq!(lex_symbol("->x"), Some((Symbol::Arrow, 2)));
+    assert_eq!(lex_symbol("..=5"), Some((SymbolDomain::DotDotEq, 3)));
+    assert_eq!(lex_symbol("..5"), Some((SymbolDomain::DotDot, 2)));
+    assert_eq!(lex_symbol(".5"), Some((SymbolDomain::Dot, 1)));
+    assert_eq!(lex_symbol("<<1"), Some((SymbolDomain::Shl, 2)));
+    assert_eq!(lex_symbol("->x"), Some((SymbolDomain::Arrow, 2)));
 }
 
 // Peş peşe symbol'ler tek token'a yapışmamalı.
 #[test]
 fn stops_when_undefined() {
-    assert_eq!(lex_symbol("=-1"), Some((Symbol::Eq, 1)));
-    assert_eq!(lex_symbol("()"), Some((Symbol::LParen, 1)));
-    assert_eq!(lex_symbol("<<="), Some((Symbol::Shl, 2)));
-    assert_eq!(lex_symbol("+ş"), Some((Symbol::Plus, 1)));
+    assert_eq!(lex_symbol("=-1"), Some((SymbolDomain::Eq, 1)));
+    assert_eq!(lex_symbol("()"), Some((SymbolDomain::LParen, 1)));
+    assert_eq!(lex_symbol("<<="), Some((SymbolDomain::Shl, 2)));
+    assert_eq!(lex_symbol("+ş"), Some((SymbolDomain::Plus, 1)));
 }
 
 #[test]
@@ -75,8 +75,8 @@ fn not_a_symbol() {
 
 #[test]
 fn keyword_lookup() {
-    assert_eq!(Keyword::from_str("let"), Some(Keyword::Var));
-    assert_eq!(Keyword::from_str("letter"), None);
+    assert_eq!(KeywordDomain::from_str("let"), Some(KeywordDomain::Var));
+    assert_eq!(KeywordDomain::from_str("letter"), None);
 }
 
 // ---------- sayılar ----------
