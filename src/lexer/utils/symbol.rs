@@ -3,6 +3,7 @@ use super::super::types::*;
 
 pub const TOKEN_SYMBOL: &[(&str, SymbolDomain)] = &[
     // 3 karakter
+    /* *
     ("..=", SymbolDomain::DotDotEq),
     // 2 karakter
     ("==", SymbolDomain::EqEq), ("!=", SymbolDomain::NotEq),
@@ -23,9 +24,14 @@ pub const TOKEN_SYMBOL: &[(&str, SymbolDomain)] = &[
     ("(", SymbolDomain::LParen), (")", SymbolDomain::RParen),
     ("{", SymbolDomain::LBrace), ("}", SymbolDomain::RBrace),
     ("[", SymbolDomain::LBracket), ("]", SymbolDomain::RBracket),
-    (",", SymbolDomain::Comma), (";", SymbolDomain::Semicolon),
+    (",", SymbolDomain::Comma),
     (":", SymbolDomain::Colon), (".", SymbolDomain::Dot),
     ("?", SymbolDomain::Question), ("@", SymbolDomain::At), ("#", SymbolDomain::Hash),
+    */
+    ("+", SymbolDomain::Plus),
+    ("-", SymbolDomain::Minus),
+    ("=", SymbolDomain::Eq),
+    (";", SymbolDomain::Semicolon)
 ];
 
 pub fn symbol_from_str(s: &str) -> Option<SymbolDomain> {

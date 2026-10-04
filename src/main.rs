@@ -1,6 +1,6 @@
 use std::io::Result;
 
-use crate::lexer::core::tokenize;
+use crate::{lexer::core::tokenize, parser::core::parse};
 
 
 mod lexer;
@@ -9,17 +9,17 @@ mod parser;
 fn main() -> Result<()> {
     
     
-    let my_code: &str = "var x = 5;";
+    let my_code: &str = "var x = 5;var y = 0-5+x;";
 
 
     println!("The Code: {my_code}");
     let tokens = tokenize(my_code).unwrap() ;
-    for token in tokens{
+    for token in &tokens{
        println!("Kind: {:?}, Value: {:?}, ({:?})",token.kind,token.lexeme, token.span);
     }
     println!();
-
-    
+    let program: parser::core::AstNode = parse(tokens);
+    program.print_tree(0);
 
     
     /*

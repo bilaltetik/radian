@@ -1,4 +1,4 @@
-use crate::lexer::utils::symbol;
+
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum IntegerAffix {
@@ -30,23 +30,6 @@ pub enum LiteralKind {
 pub enum KeywordDomain {
     Var,
     As,
-    Mut,
-    Const,
-    Fn,
-    Return,
-    If,
-    Else,
-    While,
-    For,
-    In,
-    Loop,
-    Break,
-    Continue,
-    Struct,
-    Enum,
-    Impl,
-    True,
-    False,
 }
 
 impl KeywordDomain {
@@ -54,24 +37,7 @@ impl KeywordDomain {
     pub fn from_str(s: &str) -> Option<KeywordDomain> {
         Some(match s {
             "var" => KeywordDomain::Var,
-            "as" => KeywordDomain::As,
-            "mut" => KeywordDomain::Mut,
-            "const" => KeywordDomain::Const,
-            "fn" => KeywordDomain::Fn,
-            "return" => KeywordDomain::Return,
-            "if" => KeywordDomain::If,
-            "else" => KeywordDomain::Else,
-            "while" => KeywordDomain::While,
-            "for" => KeywordDomain::For,
-            "in" => KeywordDomain::In,
-            "loop" => KeywordDomain::Loop,
-            "break" => KeywordDomain::Break,
-            "continue" => KeywordDomain::Continue,
-            "struct" => KeywordDomain::Struct,
-            "enum" => KeywordDomain::Enum,
-            "impl" => KeywordDomain::Impl,
-            "true" => KeywordDomain::True,
-            "false" => KeywordDomain::False,
+            "As"  => KeywordDomain::As,
             _ => return None,
         })
     }
@@ -87,23 +53,12 @@ pub enum WordKind {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum SymbolDomain {
     // aritmetik
-    Plus, Minus, Star, Slash, Percent,
-    // karşılaştırma
-    EqEq, NotEq, Lt, LtEq, Gt, GtEq,
-    // mantıksal
-    AndAnd, OrOr, Bang,
-    // bit
-    Amp, Pipe, Caret, Tilde, Shl, Shr,
-    // atama
-    Eq, PlusEq, MinusEq, StarEq, SlashEq, PercentEq,
-    // gruplama
-    LParen, RParen, LBrace, RBrace, LBracket, RBracket,
-    // noktalama
-    Comma, Semicolon, Colon, ColonColon, Dot, DotDot, DotDotEq,
-    Arrow, FatArrow, Question, At, Hash,
+    Plus, 
+    Minus,
+
+    Eq,
+    Semicolon,
 }
-
-
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum TokenKind {
