@@ -78,8 +78,9 @@ fn not_a_symbol() {
 
 #[test]
 fn keyword_lookup() {
-    assert_eq!(KeywordDomain::from_str("let"), Some(KeywordDomain::Var));
-    assert_eq!(KeywordDomain::from_str("letter"), None);
+    assert_eq!(KeywordDomain::from_str("var"), Some(KeywordDomain::Var));
+    assert_eq!(KeywordDomain::from_str("As"), Some(KeywordDomain::As));
+    assert_eq!(KeywordDomain::from_str("variable"), None);
 }
 
 // ---------- sayılar ----------

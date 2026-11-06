@@ -58,6 +58,11 @@ pub enum SymbolDomain {
 
     Eq,
     Semicolon,
+
+    LeftBracket,
+    RightBracket,
+    
+    Comma,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

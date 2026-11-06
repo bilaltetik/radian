@@ -31,7 +31,10 @@ pub const TOKEN_SYMBOL: &[(&str, SymbolDomain)] = &[
     ("+", SymbolDomain::Plus),
     ("-", SymbolDomain::Minus),
     ("=", SymbolDomain::Eq),
-    (";", SymbolDomain::Semicolon)
+    (";", SymbolDomain::Semicolon),
+    ("(", SymbolDomain::LeftBracket),
+    (")", SymbolDomain::RightBracket),
+    (",", SymbolDomain::Comma),
 ];
 
 pub fn symbol_from_str(s: &str) -> Option<SymbolDomain> {
